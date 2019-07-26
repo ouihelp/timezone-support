@@ -8,3 +8,5 @@ src/index-*.d.ts
 src/lookup/data-*.d.ts
 test/browser
 test/typings.test.js
+
+europe-paris-data.js

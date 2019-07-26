@@ -2,12 +2,17 @@ const { outputFile: writeFile } = require('fs-extra')
 const tz = require('../node_modules/moment-timezone/moment-timezone-utils').tz
 const groupLeaders = require('./data/group-leaders.json')
 const unpackedTimeZoneData = require('./data/unpacked.json')
-const packedTimeZoneData = require('./data/packed.json')
 
-function limitData (firstYear, lastYear) {
-  return firstYear && lastYear
-    ? tz.filterLinkPack(unpackedTimeZoneData, firstYear, lastYear, groupLeaders)
-    : packedTimeZoneData
+function limitData (firstYear, lastYear, timeZones) {
+  let localUnpackedTimeZoneData = unpackedTimeZoneData
+  if (timeZones) {
+    localUnpackedTimeZoneData = {
+      version: unpackedTimeZoneData.version,
+      links: unpackedTimeZoneData.links,
+      zones: unpackedTimeZoneData.zones.filter(z => timeZones.split(',').includes(z.name)),
+    }
+  }
+  return tz.filterLinkPack(localUnpackedTimeZoneData, firstYear || 1900, lastYear || 2050, localGroupLeaders)
 }
 
 function formatES6Module (content) {
@@ -38,9 +43,9 @@ function formatUMDModule (content, umdName) {
 function createTimeZoneData (options = {}) {
   const {
     asModule, asCjsModule, asAmdModule, asUmdModule, umdName,
-    firstYear, lastYear, outputFile
+    firstYear, lastYear, outputFile, timeZones
   } = options
-  const data = limitData(firstYear, lastYear)
+  const data = limitData(firstYear, lastYear, timeZones)
   let content = JSON.stringify(data, undefined, 2)
   if (asModule) {
     content = formatES6Module(content)

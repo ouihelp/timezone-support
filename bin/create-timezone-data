@@ -17,6 +17,7 @@ commander.version(pkg.version)
   .option('-o, --output-file <file>', 'write the time zone data to a file')
   .option('-u, --as-umd-module', 'format the time zone data as an UMD module')
   .option('-o, --output-file <file>', 'write the time zone data to a file')
+  .option('-t, --time-zones <tz>', 'comma separated list of timezones to include')
 
 commander.on('--help', function () {
   console.log()
@@ -35,7 +36,7 @@ if (!(firstYear && lastYear) && !commander.allYears) {
 }
 
 const {
-  asModule, asCjsModule, asAmdModule, asUmdModule, umdName, outputFile
+  asModule, asCjsModule, asAmdModule, asUmdModule, umdName, outputFile, timeZones
 } = commander
 createTimeZoneData({
   firstYear,
@@ -45,7 +46,8 @@ createTimeZoneData({
   asAmdModule,
   asUmdModule,
   umdName,
-  outputFile
+  outputFile,
+  timeZones
 })
   .then(timeZoneData => {
     if (!outputFile) {
